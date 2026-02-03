@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Will you be my Valentine</title>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(135deg,#ffd1dc,#ffb6c1,#ffc0cb);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px
+}
+.container{
+    background:#fff;
+    border-radius:30px;
+    padding:40px;
+    max-width:450px;
+    width:100%;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(255,105,180,.3)
+}
+.generator-section{display:block}
+.valentine-section{display:none}
+
+/* CAT */
+.cat-container{margin:0 auto 25px;position:relative;width:160px}
+.cat-face{
+    width:160px;height:130px;background:#f4c5a3;border-radius:50%;margin:auto;position:relative
+}
+.cat-ear-left,.cat-ear-right{
+    width:35px;height:35px;background:#f4c5a3;position:absolute;top:-10px
+}
+.cat-ear-left{left:20px;transform:rotate(-40deg)}
+.cat-ear-right{right:20px;transform:rotate(40deg) scaleX(-1)}
+.cat-eyes{display:flex;justify-content:center;gap:40px;padding-top:45px}
+.cat-eye{width:14px;height:14px;background:#000;border-radius:50%}
+.cat-nose{width:12px;height:10px;background:#ff6b9d;border-radius:50%;margin:10px auto}
+.cat-blush-left,.cat-blush-right{
+    width:28px;height:16px;background:#f5b5a0;border-radius:50%;position:absolute;top:60px
+}
+.cat-blush-left{left:15px}
+.cat-blush-right{right:15px}
+
+h1{font-size:26px;margin-bottom:10px}
+.subtitle{color:#ff1493;margin-bottom:25px;font-weight:600}
+label{text-align:left;display:block;margin-bottom:6px;font-weight:600}
+input{
+    width:100%;padding:14px;border-radius:15px;
+    border:2px solid #ffc0cb;margin-bottom:15px
+}
+.btn{
+    width:100%;padding:15px;border:none;border-radius:15px;
+    background:linear-gradient(135deg,#ff69b4,#ff1493);
+    color:#fff;font-weight:700;cursor:pointer
+}
+.generated-link{display:none;margin-top:20px}
+.link-box{
+    padding:12px;border:1px solid #ffc0cb;border-radius:10px;
+    word-break:break-all;color:#ff1493;margin-bottom:10px
+}
+
+/* Valentine */
+.valentine-title{font-size:24px;margin-bottom:30px}
+.button-container{display:flex;gap:20px;justify-content:center}
+.yes-btn,.no-btn{
+    padding:15px 40px;border-radius:25px;border:none;font-size:18px;cursor:pointer
+}
+.yes-btn{background:#ff1493;color:#fff}
+.no-btn{background:#eee;color:#666;position:relative}
+
+.success-message{display:none;margin-top:25px}
+.kissing-animation{display:none;width:250px;margin:15px auto}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- GENERATOR -->
+<div class="generator-section" id="generatorSection">
+    <h1>💝 Valentine Link Generator</h1>
+    <p class="subtitle">Create a cute Valentine proposal</p>
+
+    <form id="linkForm">
+        <label>Your Name</label>
+        <input type="text" id="fromName" required>
+
+        <label>Valentine Name</label>
+        <input type="text" id="toName" required>
+
+        <button class="btn">✨ Generate Link</button>
+    </form>
+
+    <div class="generated-link" id="generatedLink">
+        <h3>🎉 Your Link</h3>
+        <div class="link-box" id="linkDisplay"></div>
+        <button class="btn" id="copyBtn">📋 Copy Link</button>
+    </div>
+</div>
+
+<!-- VALENTINE -->
+<div class="valentine-section" id="valentineSection">
+    <div class="cat-container">
+        <div class="cat-face">
+            <div class="cat-ear-left"></div>
+            <div class="cat-ear-right"></div>
+            <div class="cat-eyes">
+                <div class="cat-eye"></div>
+                <div class="cat-eye"></div>
+            </div>
+            <div class="cat-nose"></div>
+            <div class="cat-blush-left"></div>
+            <div class="cat-blush-right"></div>
+        </div>
+    </div>
+
+    <h2 class="valentine-title">
+        <span id="toNameDisplay"></span>, will you be my Valentine? 💖
+    </h2>
+
+    <div class="button-container">
+        <button class="yes-btn" id="yesBtn">Yes 💖</button>
+        <button class="no-btn" id="noBtn">No 😈</button>
+    </div>
+
+    <div class="success-message" id="successMessage">
+        <div class="kissing-animation" id="kissingAnimation">
+            <img src="https://media.giphy.com/media/KmxmoHUGPDjfQXqGgv/giphy.gif" width="100%">
+        </div>
+        <h2>Yayyyy 💕</h2>
+        <p><span id="fromNameSuccess"></span> is so happy!</p>
+    </div>
+</div>
+
+</div>
+
+<script>
+/* EMAILJS */
+emailjs.init("pIYbtOEoa08eApjB1");
+
+/* URL CHECK */
+const urlParams = new URLSearchParams(window.location.search);
+const fromParam = urlParams.get("from");
+const toParam = urlParams.get("to");
+
+const generatorSection = document.getElementById("generatorSection");
+const valentineSection = document.getElementById("valentineSection");
+
+if (fromParam && toParam) {
+    generatorSection.style.display = "none";
+    valentineSection.style.display = "block";
+    document.getElementById("toNameDisplay").textContent = decodeURIComponent(toParam);
+    document.getElementById("fromNameSuccess").textContent = decodeURIComponent(fromParam);
+    initValentine();
+} else {
+    initGenerator();
+}
+
+function initGenerator(){
+    const form = document.getElementById("linkForm");
+    const linkBox = document.getElementById("generatedLink");
+    const linkDisplay = document.getElementById("linkDisplay");
+
+    form.addEventListener("submit", function(e){
+        e.preventDefault();
+
+        const fromVal = document.getElementById("fromName").value;
+        const toVal = document.getElementById("toName").value;
+
+        const link = `${location.origin}${location.pathname}?from=${encodeURIComponent(fromVal)}&to=${encodeURIComponent(toVal)}`;
+
+        linkDisplay.textContent = link;
+        linkBox.style.display = "block";
+
+        emailjs.send(
+            "service_idctakt",
+            "template_na56ajd",
+            {
+                from_name: fromVal,
+                to_name: toVal,
+                link: link,
+                time: new Date().toLocaleString()
+            }
+        );
+    });
+
+    document.getElementById("copyBtn").onclick = () => {
+        navigator.clipboard.writeText(linkDisplay.textContent);
+        alert("Copied 💖");
+    };
+}
+
+function initValentine(){
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+
+    noBtn.addEventListener("mouseenter", ()=>{
+        noBtn.style.position="fixed";
+        noBtn.style.left=Math.random()*80+"%";
+        noBtn.style.top=Math.random()*80+"%";
+    });
+
+    yesBtn.onclick = ()=>{
+        document.getElementById("successMessage").style.display="block";
+        document.getElementById("kissingAnimation").style.display="block";
+    };
+}
+</script>
+
+</body>
+</html>
